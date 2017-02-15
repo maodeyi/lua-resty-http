@@ -333,9 +333,9 @@ if not ok then
   ngx.log(ngx.ERR, err)
   return
 end
-
+response_header = {["test"] = "aa", ["test1"] = "aa1"}
 httpc:set_timeout(2000)
-httpc:proxy_response(httpc:proxy_request())
+httpc:proxy_response(httpc:proxy_request(response_header))
 httpc:set_keepalive()
 ```
 

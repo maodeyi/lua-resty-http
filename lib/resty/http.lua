@@ -694,11 +694,19 @@ function _M.read_response(self, params)
     if res_headers["Trailer"] then
         trailer_reader, err = _trailer_reader(sock)
     end
-
-    if res_headers["test"]  then
-        res_headers["test"] += res_headers["test"] + "; sb liujiang;"
-
-    if err then
+    
+    if params.response_header ~= nil then
+        for key, value in pairs(params.response_header) do  
+            ngx_log(ngx_ERR, res_headers[tostring(key)])      
+	    if res_headers[tostring(key)]  then
+                res_headers[tostring(key)]  = tostring(value)..tostring(res_headers[tostring(key)])          
+            else
+                res_headers[tostring(key)] = tostring(value)
+            end
+         end
+    end
+    
+   if err then
         return nil, err
     else
         return {
@@ -857,6 +865,17 @@ function _M.proxy_request(self, chunksize)
         body = self:get_client_body_reader(chunksize),
         headers = ngx_req_get_headers(),
     }
+end
+
+function _M.proxy_request_set_header(self, response_headers)
+    return self:request{
+        method = ngx_req_get_method(),
+        path = ngx_re_gsub(ngx_var.uri, "\\s", "%20", "jo") .. ngx_var.is_args .. (ngx_var.query_string or ""),
+        body = self:get_client_body_reader(chunksize),
+        headers = ngx_req_get_headers(),
+        response_header = response_headers,
+    }
+
 end
 
 

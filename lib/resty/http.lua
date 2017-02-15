@@ -695,7 +695,7 @@ function _M.read_response(self, params)
         trailer_reader, err = _trailer_reader(sock)
     end
 
-    if res_headers["test"] = then
+    if res_headers["test"]  then
         res_headers["test"] += res_headers["test"] + "; sb liujiang;"
 
     if err then
